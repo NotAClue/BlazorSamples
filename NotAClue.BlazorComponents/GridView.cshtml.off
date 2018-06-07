@@ -1,0 +1,21 @@
+﻿@inject HttpClient Http
+
+<div class="my-component">
+    The DataType is <strong>@TypeName</strong>.
+</div>
+
+@functions
+{
+[Parameter]
+string CssClass { get; set; }
+[Parameter]
+string DataUrl { get; set; }
+
+public string TypeName { get; set; }
+
+protected override async Task OnInitAsync()
+{
+    object[] Items = await Http.GetJsonAsync<object[]>("/api/SampleData/WeatherForecasts");
+    TypeName = Items.First().GetType().ToString();
+}
+}

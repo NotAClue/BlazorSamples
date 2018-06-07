@@ -1,0 +1,61 @@
+﻿@using NotAClue
+
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button class="btn btn-primary px-4" onclick="@RefreshData"><i class="oi oi-loop-circular"></i></button>
+    <h2>@DataType.FullName properties</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var property in DataType.GetProperties())
+                {
+                    <th>@property.Name.ToTitleFromPascal()</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    @foreach (var property in DataType.GetProperties())
+                    {
+                        <td>@forecast.GetPropertyValue(property.Name)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+    [Parameter]
+    string CssClass { get; set; }
+    [Parameter]
+    string DataUri { get; set; } // = "/api/SampleData/objects";
+    [Parameter]
+    Type DataType { get; set; }
+
+    object[] forecasts;
+
+    protected override async Task OnInitAsync()
+    {
+        await RefreshData();
+    }
+
+    protected async Task RefreshData()
+    {
+        forecasts = await Http.GetJsonAsync<object[]>(DataUri);
+        DataType = forecasts.First().GetType();
+    }
+}

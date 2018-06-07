@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Blazor.Components;
 using Microsoft.AspNetCore.Blazor.RenderTree;
-using PortalSample.Shared;
 
-namespace PortalSample.Client.Pages
+namespace PortalSample.Client
 {
     public class GridView : BlazorComponent
     {
@@ -23,16 +22,14 @@ namespace PortalSample.Client.Pages
 
         #region parameters
         [Parameter]
-        private string cssClass { get; set; }
+        private string CssClass { get; set; }
 
         [Parameter]
-        private string RequestUri { get; set; };
+        private string RequestUri { get; set; }
         #endregion
 
         #region properties
         public IEnumerable<object> Items { get; set; }
-
-        public string Title { get; set; } = "Hello World - Class Only";
         #endregion
 
         protected override void OnInit()
@@ -53,7 +50,7 @@ namespace PortalSample.Client.Pages
 
         protected override async Task OnInitAsync()
         {
-            Items = await Http.GetJsonAsync<WeatherForecast[]>(RequestUri);
+            Items = await Http.GetJsonAsync<object[]>(RequestUri);
             ObjectType = Items.First().GetType().ToString();
         }
 
@@ -61,11 +58,11 @@ namespace PortalSample.Client.Pages
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             builder.OpenElement(1, "div");
-            builder.AddAttribute(2, "class", "test");
+            builder.AddAttribute(2, "class", CssClass);
             if(!String.IsNullOrEmpty(ObjectType))
                 builder.AddContent(3, ObjectType);
             else
-                builder.AddContent(3, Title);
+                builder.AddContent(3, "Test");
 
             builder.CloseElement();
         }
